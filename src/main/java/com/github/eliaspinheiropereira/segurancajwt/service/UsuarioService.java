@@ -1,5 +1,7 @@
 package com.github.eliaspinheiropereira.segurancajwt.service;
 
+import com.github.eliaspinheiropereira.segurancajwt.controller.dto.UsuarioDTO;
+import com.github.eliaspinheiropereira.segurancajwt.controller.mapper.UsuarioMapper;
 import com.github.eliaspinheiropereira.segurancajwt.model.Usuario;
 import com.github.eliaspinheiropereira.segurancajwt.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -8,32 +10,27 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final UsuarioMapper usuarioMapper;
 
-    public void salvar(Usuario usuario){
-        Usuario novoUsuario = new Usuario();
-        novoUsuario.setLogin(usuario.getLogin());
-        novoUsuario.setSenha(usuario.getSenha());
-        novoUsuario.setRoles(usuario.getRoles());
-
+    public void salvar(UsuarioDTO usuario){
+        Usuario novoUsuario = this.usuarioMapper.toEntity(usuario);
         this.usuarioRepository.save(novoUsuario);
     }
 
-    public void atualizar(int id, Usuario usuario){
+    public void atualizar(int id, UsuarioDTO usuario){
         Usuario buscarUsuario = this.usuarioRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("usuario não encontrado"));
 
-        Usuario usuarioAtualizado = buscarUsuario;
-        usuarioAtualizado.setId(buscarUsuario.getId());
-        usuarioAtualizado.setLogin(usuario.getLogin());
-        usuarioAtualizado.setSenha(usuario.getSenha());
-        usuarioAtualizado.setRoles(usuario.getRoles());
-
+        Usuario usuarioAtualizado = this.usuarioMapper.toEntity(usuario);
+        usuarioAtualizado.setId(id);
         this.usuarioRepository.save(usuarioAtualizado);
     }
 
@@ -44,16 +41,17 @@ public class UsuarioService {
         this.usuarioRepository.deleteById(id);
     }
 
-    public Usuario buscarUsuarioPorId(int id){
+    public List<UsuarioDTO> buscarUsuarioPorId(int id){
         Usuario buscarUsuario = this.usuarioRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("usuario não encontrado"));
 
-        return buscarUsuario;
+        return List.of(this.usuarioMapper.toDTO(buscarUsuario));
     }
 
-    public Page<Usuario> buscarTodosUsuarios(int page, int size){
+    public Page<UsuarioDTO> buscarTodosUsuarios(int page, int size){
         Pageable pageable = PageRequest.of(page, size);
         Page<Usuario> buscandoTodosUsuarios = this.usuarioRepository.findAll(pageable);
-        return buscandoTodosUsuarios;
+        Page<UsuarioDTO> usuarioDTOS = buscandoTodosUsuarios.map(this.usuarioMapper::toDTO);
+        return usuarioDTOS;
     }
 }

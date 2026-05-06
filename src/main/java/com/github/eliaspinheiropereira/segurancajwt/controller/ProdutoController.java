@@ -1,5 +1,6 @@
 package com.github.eliaspinheiropereira.segurancajwt.controller;
 
+import com.github.eliaspinheiropereira.segurancajwt.controller.dto.ProdutoDTO;
 import com.github.eliaspinheiropereira.segurancajwt.model.Produto;
 import com.github.eliaspinheiropereira.segurancajwt.model.Usuario;
 import com.github.eliaspinheiropereira.segurancajwt.service.ProdutoService;
@@ -20,7 +21,7 @@ public class ProdutoController {
 
     @PostMapping
     public ResponseEntity<Void> salvar(
-            @RequestBody Produto produto
+            @RequestBody ProdutoDTO produto
     ) {
         log.info("POST -> /produtos");
         this.produtoService.salvar(produto);
@@ -30,7 +31,7 @@ public class ProdutoController {
     @PutMapping("/{id}")
     public ResponseEntity<Void> atualizar(
             @PathVariable int id,
-            @RequestBody Produto produto
+            @RequestBody ProdutoDTO produto
     ){
         log.info("PUT -> /produtos/{}", id);
         this.produtoService.atualizar(id, produto);
@@ -47,21 +48,21 @@ public class ProdutoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Produto> buscarProdutoPorId(
+    public ResponseEntity<ProdutoDTO> buscarProdutoPorId(
             @PathVariable int id
     ){
         log.info("GET -> /produtos/{}", id);
-        Produto buscarProdutoPorId = this.produtoService.buscarProdutoPorId(id);
+        ProdutoDTO buscarProdutoPorId = this.produtoService.buscarProdutoPorId(id);
         return new ResponseEntity<>(buscarProdutoPorId, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<Page<Produto>> buscarTodosProdutos(
+    public ResponseEntity<Page<ProdutoDTO>> buscarTodosProdutos(
             @RequestParam(value = "page") int page,
             @RequestParam(value = "size") int size
     ){
         log.info("GET -> /produtos?page={}&size={}", page, size);
-        Page<Produto> buscandoTodosProdutos = this.produtoService.buscarTodosProdutos(page, size);
+        Page<ProdutoDTO> buscandoTodosProdutos = this.produtoService.buscarTodosProdutos(page, size);
         return new ResponseEntity(buscandoTodosProdutos.getContent(), HttpStatus.OK);
     }
 }
