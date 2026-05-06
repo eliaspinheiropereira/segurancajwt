@@ -1,5 +1,6 @@
 package com.github.eliaspinheiropereira.segurancajwt.controller;
 
+import com.github.eliaspinheiropereira.segurancajwt.controller.dto.UsuarioDTO;
 import com.github.eliaspinheiropereira.segurancajwt.model.Usuario;
 import com.github.eliaspinheiropereira.segurancajwt.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("usuarios")
@@ -19,7 +22,7 @@ public class UsuarioController {
 
     @PostMapping
     public ResponseEntity<Void> salvar(
-            @RequestBody Usuario usuario
+            @RequestBody UsuarioDTO usuario
     ) {
         log.info("POST -> /usuarios");
         this.usuarioService.salvar(usuario);
@@ -29,7 +32,7 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public ResponseEntity<Void> atualizar(
             @PathVariable int id,
-            @RequestBody Usuario usuario
+            @RequestBody UsuarioDTO usuario
     ){
         log.info("PUT -> /usuarios/{}", id);
         this.usuarioService.atualizar(id, usuario);
@@ -46,11 +49,11 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> buscarUsuarioPorId(
+    public ResponseEntity<List<UsuarioDTO>> buscarUsuarioPorId(
             @PathVariable int id
     ){
         log.info("GET -> /usuarios/{}", id);
-        Usuario buscarUsuarioPorId = this.usuarioService.buscarUsuarioPorId(id);
+        List<UsuarioDTO> buscarUsuarioPorId = this.usuarioService.buscarUsuarioPorId(id);
         return new ResponseEntity<>(buscarUsuarioPorId, HttpStatus.OK);
     }
 
@@ -60,7 +63,7 @@ public class UsuarioController {
             @RequestParam(value = "size") int size
     ){
         log.info("GET -> /usuarios?page={}&size={}", page, size);
-        Page<Usuario> buscandoTodosUsuarios = this.usuarioService.buscarTodosUsuarios(page, size);
+        Page<UsuarioDTO> buscandoTodosUsuarios = this.usuarioService.buscarTodosUsuarios(page, size);
         return new ResponseEntity(buscandoTodosUsuarios.getContent(), HttpStatus.OK);
     }
 
